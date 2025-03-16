@@ -22,6 +22,7 @@ import useUserStore from "@/store/store";
 import { ProfileInfoCard } from "@/widgets/cards";
 import { Box, Button, Input, MenuItem, Select, TextField } from "@mui/material";
 import skillsInterestStore from "@/store/skillsInterestStore";
+import apiInstance from "../auth/useAuth";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -47,6 +48,8 @@ export function Profile() {
   const [personalInfo, setPersonalInfo] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedInterests, setSelectedInterests] = useState([]);
+  const [history,setHistory] = useState([]);
+  const [posts,setPosts] = useState([]);
   useEffect(() => {
     if (user) {
       setFirstName(user[0]?.first_name || "");
@@ -57,9 +60,42 @@ export function Profile() {
       setInterest(user[0].user_interest);
       setSelectedSkills(user[0]?.user_skills.map((s) => s.skill.id) || []);
       setSelectedInterests(user[0]?.user_interest.map((i) => i.cause.id) || []);
+      fetchHistory(user[0]?.user_id)
+      fetchPost(user[0]?.user_id)
     }
   }, [user]); 
-  console.log(skillsList,interestsList);
+  const fetchHistory = async (id) => {
+    if (!id) {
+      console.error("User ID is undefined. Cannot fetch history.");
+      return;
+    }
+    
+    console.log("Fetching history for user ID:", id);
+    
+    try {
+      const response = await apiInstance.get(`/campaign/history/${id}`);
+      console.log("Fetched history:", response.data); // Debug response
+      setHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
+  const fetchPost = async (id) => {
+    if (!id) {
+      console.error("User ID is undefined. Cannot fetch history.");
+      return;
+    }
+    
+    console.log("Fetching history for user ID:", id);
+    
+    try {
+      const response = await apiInstance.get(`/post/history/${id}`);
+      console.log("Fetched post:", response.data.slice(0,3)); // Debug response
+      setPosts(response.data.slice(0,3));
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -123,6 +159,12 @@ export function Profile() {
                     <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                     Profile
                   </Tab>
+                  <Tab value="history" onClick={() => {
+                    setActiveTab("history");
+                  }}>
+                    <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
+                    History
+                  </Tab>
                   <Tab value="settings" onClick={() => setActiveTab("settings")}>
                     <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                     Settings
@@ -133,7 +175,32 @@ export function Profile() {
           </div>
 
           {/* Content based on active tab */}
-          {activeTab === "profile" ? (
+          {activeTab === "history" && (
+            <div className="p-6 bg-white rounded-lg shadow-md">
+              <Typography variant="h5" className="mb-4 font-semibold">
+                Your Past Activities On Campaign
+              </Typography>
+
+              {history.length === 0 ? (
+                <Typography>No history available.</Typography>
+              ) : (
+                <ul className="space-y-4">
+                  {history.map((item, index) => (
+                    <li key={index} className="p-4 border rounded-md shadow-sm">
+                      <Typography variant="h6"> Campaign Name: {item.campaign.title}</Typography>
+                      <Typography variant="body2" color="gray">
+                        Date: {new Date(item.created_at).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="body2" color="gray">
+                        Contributed: {item.collected}
+                      </Typography>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          {activeTab === "profile" && (
             <div className="grid-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
               <ProfileInfoCard
                 title="Profile Information"
@@ -180,14 +247,28 @@ export function Profile() {
               </div>
               <div>
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Recent Post
+                Your Recent Post
               </Typography>
               <ul className="flex flex-col gap-6">
-                <h1>new post</h1>
+              {posts.length === 0 ? (
+                <Typography>No history available.</Typography>
+              ) : (
+                <ul className="space-y-4">
+                  {posts.map((post) => (
+                    <li key={post.id} className="p-4 border rounded-md shadow-sm">
+                      <Typography variant="h6"> Campaign Name: {post.title}</Typography>
+                      <Typography variant="body2" color="gray">
+                        Date: {new Date(post.created_at).toLocaleDateString()}
+                      </Typography>
+                    </li>
+                  ))}
+                </ul>
+              )}
               </ul>
               </div>
             </div>
-          ) : (
+          )}
+          {activeTab === "settings" && (
              // Settings Tab - Editable Form
              <div className="p-6 bg-white rounded-lg shadow-md">
              <form onSubmit={handleSubmit}>
@@ -288,7 +369,7 @@ export function Profile() {
                </div>
              </form>
            </div>
-          )}
+          ) }
   
         </CardBody>
       </Card>
