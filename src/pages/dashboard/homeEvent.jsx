@@ -7,16 +7,17 @@ import useUserStore from "@/store/store";
 export default function EventSidebar() {
   const [events, setEvents] = useState([]);
   const { user } = useUserStore(); // Get logged-in user info
-
+  const fetchEvents = async () => {
+    try {
+      const res = await apiInstance.get("/events/");
+      console.log(res);
+      setEvents(res.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const res = await apiInstance.get("/event/create/");
-        setEvents(res.data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
+    
     fetchEvents();
   }, []);
 
