@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, Button, Link } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import apiInstance from "../auth/useAuth";
-import useUserStore from "@/store/store";
+import useUserStore from "../../store/store";
+import Toast from "../../configs/Toast";
 
 export default function EventSidebar() {
   const [events, setEvents] = useState([]);
@@ -10,10 +11,12 @@ export default function EventSidebar() {
   const fetchEvents = async () => {
     try {
       const res = await apiInstance.get("/events/");
-      console.log(res);
       setEvents(res.data);
     } catch (error) {
-      console.error("Error fetching events:", error);
+      Toast().fire({
+        title: `${error}`,
+        icon: "error"
+      })
     }
   };
   useEffect(() => {
@@ -37,10 +40,11 @@ export default function EventSidebar() {
     try {
       const res = await apiInstance.post(`/event/register/`, registerData);
       if (res.status === 201) {
-        console.log(res.data.message);
-
-        // 🔥 Update events state to reflect the registration without reloading
-        setEvents((prevEvents) =>
+        Toast().fire({
+          title: `${res.data.message}`,
+          icon: "error"
+        })
+          setEvents((prevEvents) =>
           prevEvents.map((event) =>
             event.event_id === id
               ? { ...event, registered_people: [...event.registered_people, { user: user[0]?.user_id }] }
@@ -49,7 +53,10 @@ export default function EventSidebar() {
         );
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      Toast().fire({
+        title: `${error}`,
+        icon:"error"
+      })
     }
   };
 

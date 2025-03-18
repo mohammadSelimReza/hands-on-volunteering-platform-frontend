@@ -18,11 +18,12 @@ import {
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import useUserStore from "@/store/store";
-import { ProfileInfoCard } from "@/widgets/cards";
 import { Box, Button, Input, MenuItem, Select, TextField } from "@mui/material";
-import skillsInterestStore from "@/store/skillsInterestStore";
+
 import apiInstance from "../auth/useAuth";
+import useSkillsInterestStore from "../../store/skillsInterestStore";
+import ProfileInfoCard from "../../widgets/cards/profile-info-card";
+import useUserStore from "../../store/store";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -36,7 +37,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export function Profile() {
-  const { skillsList,interestsList } = skillsInterestStore();
+  const { skillsList,interestsList } = useSkillsInterestStore();
   const { user,updateProfile } = useUserStore();
   const [skills, setSkills] = useState([]);
   const [interest, setInterest] = useState([]);
@@ -90,8 +91,8 @@ export function Profile() {
     
     try {
       const response = await apiInstance.get(`/post/history/${id}`);
-      console.log("Fetched post:", response.data.slice(0,3)); // Debug response
-      setPosts(response.data.slice(0,3));
+      console.log("Fetched post:", response.data.slice(0,1)); // Debug response
+      setPosts(response.data.slice(0,1));
     } catch (error) {
       console.error("Error fetching history:", error);
     }
@@ -124,6 +125,13 @@ export function Profile() {
       console.log(error)
     }
   };
+  const handleCertificate = async() =>{
+    try {
+      await apiInstance.get(`/certificate/${user[0]?.user_id}/`)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover bg-center">
@@ -246,6 +254,7 @@ export function Profile() {
                 </div>
               </div>
               <div>
+              <div className="mb-6">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Your Recent Post
               </Typography>
@@ -265,6 +274,27 @@ export function Profile() {
                 </ul>
               )}
               </ul>
+              </div>
+              <div>
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Your Recent Post
+              </Typography>
+              <div className="p-4 border rounded-md shadow-sm">
+                {
+                  user[0]?.Profile?.point_achieved >= 20
+                  ?
+                  (
+                  <Button onClick={()=>handleCertificate()}>
+                    Get Your Certificate Now!!!
+                  </Button>
+                  )
+                  :
+                  (
+                    <p>You have to contriubte more.</p>
+                  )
+                }
+              </div>
+              </div>
               </div>
             </div>
           )}

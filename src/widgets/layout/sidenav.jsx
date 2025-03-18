@@ -17,7 +17,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const navigate = useNavigate();
   const handleLogout = () =>{
     logout();
-    navigate("/");
+    navigate("/auth/sign-in");
   }
   const sidenavTypes = {
     dark: "bg-gradient-to-br from-gray-800 to-gray-900",

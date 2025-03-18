@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardMedia, Typography, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { MapPinIcon } from "@heroicons/react/24/solid";
 import apiInstance from "../auth/useAuth";
-import useUserStore from "@/store/store";
+import Toast from "../../configs/Toast";
+import useUserStore from "../../store/store";
 
 const EventCard = ({ event, handleRegister, user }) => {
   const isRegistered = event.registered_people.some(
@@ -75,7 +76,10 @@ const Event = () => {
       setLocationData(locationRes.data);
       setCategoryData(categoryRes.data);
     } catch (error) {
-      console.error("Error fetching location/category data", error);
+      Toast().fire({
+        title: `${error}`,
+        icon:"error"
+      })
     }
   };
 
@@ -83,9 +87,6 @@ const Event = () => {
     try {
       let url = `/events/`;
       let queryParams = {};
-
-      // Add debug log to check the values of filters
-      console.log('Filters:', { is_available, categoryId, locationId });
 
       if (is_available !== null && is_available !== undefined) {
         queryParams.is_available = is_available;
@@ -103,13 +104,13 @@ const Event = () => {
       if (queryString) {
         url = `${url}?${queryString}`;
       }
-
-      console.log("API Request URL:", url); // Debug API URL
-
       const res = await apiInstance.get(url);
       setEvents(res?.data);
     } catch (error) {
-      console.error("Error fetching events:", error);
+      Toast().fire({
+        title: `${error}`,
+        icon:"error"
+      })
     }
   };
 
@@ -124,6 +125,10 @@ const Event = () => {
     try {
       const res = await apiInstance.post(`/event/register/`, registerData);
       if (res.status === 201) {
+        Toast().fire({
+                title: `${"Registered for this event"}`,
+                icon:"success"
+              })
         setEvents((prevEvents) =>
           prevEvents.map((event) =>
             event.event_id === eventId
@@ -133,7 +138,10 @@ const Event = () => {
         );
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      Toast().fire({
+        title: `${error}`,
+        icon:"error"
+      })
     }
   };
 

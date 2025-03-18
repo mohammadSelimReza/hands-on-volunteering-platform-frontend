@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
-import useUserStore from "@/store/store";
 import apiInstance from "../auth/useAuth";
+import useUserStore from "../../store/store";
+import Toast from "../../configs/Toast";
+
 
 const CampaignCreate = ({fetchPostData}) => {
     const {user} = useUserStore();
@@ -9,9 +11,8 @@ const CampaignCreate = ({fetchPostData}) => {
   const [campaignData, setCampaignData] = useState({
     title: "",
     body: "",
-    total_target: "",
     image: null,
-    level: "Low", // Default value
+    level: "Low",
   });
 
   // Open and Close Modal
@@ -32,10 +33,8 @@ const CampaignCreate = ({fetchPostData}) => {
         title: campaignData.title,
         body: campaignData.body,
         level: campaignData.level,
-        total_target: campaignData.total_target,
         image: campaignData.image
     };
-    console.log(JSON.stringify(formData));
     try {
       const response = await apiInstance.post(`/campaigns/`,formData);
         console.log(response)
@@ -44,27 +43,37 @@ const CampaignCreate = ({fetchPostData}) => {
         campaignData.title = "";
         campaignData.body = "";
         campaignData.level = "";
-        campaignData.total_target= 0;
         campaignData.image = null;
-        console.log("Campaign posted successfully");
+        Toast().fire({
+          title: `${"Successfull Posted"}`,
+          icon:"success"
+        })
         
         handleClose();
       } else {
-        console.error("Failed to post campaign");
+        Toast().fire({
+                title: `${"Unable to Post"}`,
+                icon:"error"
+              })
       }
     } catch (error) {
-      console.error("Error posting campaign:", error);
-    }
+      Toast().fire({
+              title: `${error}`,
+              icon:"error"
+            })}
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-row items-center mb-10">
       {/* Open Modal Input */}
       <div
-        className="w-full max-w-md p-4 bg-white text-gray-700 border border-gray-300 rounded-lg cursor-pointer shadow-sm"
+        className="w-full p-4 bg-white text-gray-700 border border-gray-300 rounded-lg cursor-pointer shadow-sm"
         onClick={handleOpen}
       >
-        What's on your mind?
+        What's on your mind? Post here....
+      </div>
+      <div className="w-60 text-center font-bold">
+        Points: {user[0]?.Profile?.point_achieved}
       </div>
 
       {/* Modal */}
@@ -91,17 +100,7 @@ const CampaignCreate = ({fetchPostData}) => {
             onChange={handleChange}
             InputProps={{ style: { backgroundColor: "white" } }}
           />
-          <TextField
-            fullWidth
-            margin="dense"
-            label="Total Contribution Needed"
-            name="total_target"
-            type="number"
-            value={campaignData.total_target}
-            onChange={handleChange}
-            InputProps={{ style: { backgroundColor: "white" } }}
-          />
-
+       
           {/* Level Dropdown */}
           <div className="my-4">
             <h3>Prioty Level</h3>
@@ -123,7 +122,7 @@ const CampaignCreate = ({fetchPostData}) => {
           <TextField
             fullWidth
             margin="dense"
-            label="Add Image URL for Campaing"
+            label="Add Image URL for Campaing (Optional)"
             name="image"
             value={campaignData.image}
             onChange={handleChange}

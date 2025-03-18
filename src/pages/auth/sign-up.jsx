@@ -5,10 +5,12 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";  // Import useState hook
 import axios from "axios";  // Import axios to make API calls
 import apiInstance from "./useAuth";
+import Toast from "../../configs/Toast";
+
 
 export function SignUp() {
   // State to hold the form inputs
@@ -17,13 +19,13 @@ export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [processing,setProcessing] =  useState(false);
   // State to handle errors
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate("");
   const handleRegister = async (e) => {
     e.preventDefault(); // Prevent the default form submission
-
+    setProcessing(true)
     // Create the payload for the API
     const userData = {
       first_name: firstName,
@@ -38,14 +40,21 @@ export function SignUp() {
       const response = await apiInstance.post("/user/registration/", userData);
 
       if (response.status === 201) {
-        // Handle successful registration, like redirecting or showing a success message
-        console.log("User registered successfully", response.data);
+        // Handle successful registration, like redirecting or showing a success 
+        Toast().fire({
+          title:`${response.data.detail}`,
+          icon: "success"
+        })
+        setProcessing(false);
+        navigate("/auth/sign-in")
         // Optionally, redirect to the login page or show a success message
       }
     } catch (error) {
       // Handle error, e.g., if the email is already in use or any validation errors
+      setProcessing(false);
       if (error.response) {
-        setError(error.response.data.message || "An error occurred");
+        console.log(error.response)
+        setError(error.response.data.error || "An error occurred.Try again with Correct Information");
       } else {
         setError("Network Error");
       }
@@ -73,6 +82,7 @@ export function SignUp() {
                   First Name
                 </Typography>
                 <Input
+                  required
                   size="lg"
                   type="text"
                   placeholder="First Name"
@@ -89,6 +99,7 @@ export function SignUp() {
                   Last Name
                 </Typography>
                 <Input
+                  required
                   type="text"
                   size="lg"
                   placeholder="Last Name"
@@ -106,6 +117,7 @@ export function SignUp() {
                 Your email
               </Typography>
               <Input
+                required
                 size="lg"
                 type="email"
                 placeholder="example@mail.com"
@@ -123,6 +135,7 @@ export function SignUp() {
                   Create Password
                 </Typography>
                 <Input
+                  required
                   size="lg"
                   type="password"
                   placeholder="Password"
@@ -139,6 +152,7 @@ export function SignUp() {
                   Confirm Password
                 </Typography>
                 <Input
+                  required
                   size="lg"
                   type="password"
                   placeholder="Confirm Password"
@@ -154,7 +168,9 @@ export function SignUp() {
           </div>
 
           <Button type="submit" className="mt-6" fullWidth>
-            Register Now
+            {
+              processing ? "Registering..." : "Register"
+            }
           </Button>
 
           {/* Error message */}

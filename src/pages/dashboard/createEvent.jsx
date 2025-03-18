@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Checkbox, FormControlLabel, Stack, Chip, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import useSkillsInterestStore from '@/store/skillsInterestStore';
 import apiInstance from '../auth/useAuth';
-import useUserStore from '@/store/store';
 import { useNavigate } from 'react-router-dom';
+import useUserStore from '../../store/store';
+import useSkillsInterestStore from '../../store/skillsInterestStore';
 
 const CreateEvent = () => {
   const {user} = useUserStore();
