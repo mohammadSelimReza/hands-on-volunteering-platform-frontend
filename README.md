@@ -12,17 +12,15 @@
 
 ### Frontend:
 - **React.js** – For building the user interface and managing state.
-- **Next.js** – For server-side rendering and routing.
+- **Django** – For api building 
 - **Tailwind CSS** – For styling and building responsive layouts.
 - **Axios** – For making HTTP requests.
 - **Material-UI** – For pre-built React components (buttons, cards, etc.).
 
 ### Backend:
-- **Node.js** – Runtime environment for the server-side logic.
-- **Express.js** – Web framework for handling requests.
+- **Django** – Runtime environment for the server-side logic.
 - **PostgreSQL** – Relational database for storing user, event, and volunteer data.
 - **JWT (JSON Web Tokens)** – For handling authentication and authorization.
-- **Bcrypt.js** – For securely hashing passwords.
 - **Cors** – For enabling cross-origin requests.
 - **Dotenv** – For managing environment variables.
 
@@ -53,7 +51,6 @@
 - **Users**: Stores user information like email, password (hashed), skills, and causes they support.
 - **Events**: Stores event details like title, description, location, date, time, and category.
 - **Help Requests**: Stores community requests for help, including the urgency and description.
-- **Teams**: Stores information about teams, their members, and associated events.
 - **Volunteer Hours**: Tracks hours volunteered by users in different events.
 - **Comments**: Allows users to comment on help requests or events.
 
