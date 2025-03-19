@@ -1,19 +1,15 @@
 import {
-  Card,
   Input,
-  Checkbox,
   Button,
   Typography,
 } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";  // Import useState hook
-import axios from "axios";  // Import axios to make API calls
+import { useState } from "react";
 import apiInstance from "./useAuth";
 import Toast from "../../configs/Toast";
 
 
 export function SignUp() {
-  // State to hold the form inputs
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");

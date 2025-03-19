@@ -4,6 +4,7 @@ import { EyeIcon } from "@heroicons/react/24/outline";
 import apiInstance from "../auth/useAuth";
 import useUserStore from "../../store/store";
 import Toast from "../../configs/Toast";
+import authApiInstance from "../auth/usePrivateAuth";
 
 export default function EventSidebar() {
   const [events, setEvents] = useState([]);
@@ -38,11 +39,11 @@ export default function EventSidebar() {
     };
 
     try {
-      const res = await apiInstance.post(`/event/register/`, registerData);
+      const res = await authApiInstance().post(`/event/register/`, registerData);
       if (res.status === 201) {
         Toast().fire({
           title: `${res.data.message}`,
-          icon: "error"
+          icon: "success"
         })
           setEvents((prevEvents) =>
           prevEvents.map((event) =>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardMedia, Typography, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Card, CardContent, CardMedia, Typography, Button, Select, MenuItem, FormControl, InputLabel, CircularProgress, Box } from "@mui/material";
 import { MapPinIcon } from "@heroicons/react/24/solid";
 import apiInstance from "../auth/useAuth";
 import Toast from "../../configs/Toast";
 import useUserStore from "../../store/store";
+import authApiInstance from "../auth/usePrivateAuth";
 
 const EventCard = ({ event, handleRegister, user }) => {
   const isRegistered = event.registered_people.some(
@@ -60,7 +61,7 @@ const Event = () => {
   const [locationId, setLocationId] = useState(0);
   const [locationData, setLocationData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
-
+  const [loading,setLoading] = useState(false);
   useEffect(() => {
     fetchLocationandCategoryData();
   }, []);
@@ -84,6 +85,7 @@ const Event = () => {
   };
 
   const fetchEvents = async () => {
+    setLoading(true);
     try {
       let url = `/events/`;
       let queryParams = {};
@@ -106,11 +108,13 @@ const Event = () => {
       }
       const res = await apiInstance.get(url);
       setEvents(res?.data);
+      setLoading(false);
     } catch (error) {
       Toast().fire({
         title: `${error}`,
         icon:"error"
       })
+      setLoading(false);
     }
   };
 
@@ -123,7 +127,7 @@ const Event = () => {
     };
 
     try {
-      const res = await apiInstance.post(`/event/register/`, registerData);
+      const res = await authApiInstance().post(`/event/register/`, registerData);
       if (res.status === 201) {
         Toast().fire({
                 title: `${"Registered for this event"}`,
@@ -197,10 +201,37 @@ const Event = () => {
 
       {/* Events List */}
       <Typography variant="h5" className="mb-10 font-bold">Discover Events</Typography>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-6">
-        {events.map((event) => (
-          <EventCard key={event.event_id} event={event} handleRegister={() => handleRegister(event?.event_id)} user={user[0]} />
-        ))}
+      <div>
+        {
+          loading
+          ?
+          ( <div>
+            <Box
+              sx={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                zIndex: 9999,
+              }}
+            >
+              <CircularProgress size={60} />
+            </Box>
+          </div> )
+          :
+          (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-6">
+              {events.map((event) => (
+                <EventCard key={event.event_id} event={event} handleRegister={() => handleRegister(event?.event_id)} user={user[0]} />
+              ))}
+            </div>
+          )
+        }
       </div>
     </div>
   );

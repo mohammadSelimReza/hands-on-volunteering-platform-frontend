@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, M
 import apiInstance from "../auth/useAuth";
 import useUserStore from "../../store/store";
 import Toast from "../../configs/Toast";
+import authApiInstance from "../auth/usePrivateAuth";
 
 
 const CampaignCreate = ({fetchPostData}) => {
@@ -36,7 +37,7 @@ const CampaignCreate = ({fetchPostData}) => {
         image: campaignData.image
     };
     try {
-      const response = await apiInstance.post(`/campaigns/`,formData);
+      const response = await authApiInstance().post(`/campaigns/`,formData);
         console.log(response)
       if (response.status == 201) {
         fetchPostData();

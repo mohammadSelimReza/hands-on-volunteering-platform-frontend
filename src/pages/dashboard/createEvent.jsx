@@ -4,6 +4,7 @@ import apiInstance from '../auth/useAuth';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../store/store';
 import useSkillsInterestStore from '../../store/skillsInterestStore';
+import authApiInstance from '../auth/usePrivateAuth';
 
 const CreateEvent = () => {
   const {user} = useUserStore();
@@ -63,9 +64,7 @@ const CreateEvent = () => {
     // Prepare the event data
     const eventDataToSubmit = {
       ...eventData,
-      location: {
-        name: selectedLocation // or selectedLocation based on how you're storing it
-      },
+      location: selectedLocation,
       category: selectedInterestId || null, // Ensure empty category is set to null or omitted if not required
       skills_required: selectedSkillId || [], // Empty array or selected skills
       private: eventData.private || false, // Default to false if not provided
@@ -76,7 +75,7 @@ const CreateEvent = () => {
     try {
       // Send request to the backend
       console.log(JSON.stringify(eventDataToSubmit));
-      const response = await apiInstance.post('/event/create/', eventDataToSubmit);
+      const response = await authApiInstance().post('/events/', eventDataToSubmit);
       console.log('Event created successfully:', response.data);
       navigate("/dashboard/events");
       // Redirect or handle response
@@ -169,7 +168,7 @@ const CreateEvent = () => {
                   }}
                 >
                   {location.map((loc) => (
-                    <MenuItem key={loc.id} value={loc.name}>
+                    <MenuItem key={loc.id} value={loc.id}>
                       {loc.name}
                     </MenuItem>
                   ))}

@@ -277,7 +277,7 @@ export function Profile() {
               </div>
               <div>
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Your Recent Post
+                Get Certificate
               </Typography>
               <div className="p-4 border rounded-md shadow-sm">
                 {

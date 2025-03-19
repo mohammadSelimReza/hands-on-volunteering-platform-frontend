@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
+const API_BASE_URL=import.meta.env.VITE_API_URL
 
 const useSkillsInterestStore = create(
   persist(
@@ -13,20 +13,18 @@ const useSkillsInterestStore = create(
       fetchSkillsList: async () => {
         try {
           const res = await axios.get(`${API_BASE_URL}/skills/list/`);
-          console.log("Fetched skills:", res.data);
           set({ skillsList: res.data });
         } catch (error) {
-          console.error("Error fetching skills:", error);
+          console.log("Fetching")
         }
       },
 
       fetchInterestsList: async () => {
         try {
           const res = await axios.get(`${API_BASE_URL}/interests/list/`);
-          console.log("Fetched interests:", res.data);
           set({ interestsList: res.data });
         } catch (error) {
-          console.error("Error fetching interests:", error);
+          console.log("Fetching")
         }
       },
     }),

@@ -50,6 +50,26 @@ export function SignIn() {
       setProcessing(false);
     }
   };
+  const handleTestLogin = async (e) => {
+    setProcessing(true)
+    e.preventDefault();
+    const result = await login("awesomepeople@handson.com", "Django_Project_2025");
+    if (result.success) {
+      setProcessing(false);
+      Toast().fire({
+        title:`${"Login Succesfully"}`,
+        icon: "success"
+      })
+      navigate("/dashboard");
+    } else {
+      Toast().fire({
+        title:`${result.error?.detail || "Login Failed.Try again."}`,
+        icon: "error"
+      })
+      setProcessing(false);
+    }
+  };
+
   return (
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">
@@ -92,7 +112,7 @@ export function SignIn() {
             }
           </Button>
 
-          <div className="flex items-center justify-between gap-2 mt-6">
+          {/* <div className="flex items-center justify-between gap-2 mt-6">
             <Checkbox
               label={
                 <Typography
@@ -110,12 +130,19 @@ export function SignIn() {
                 Forgot Password
               </a>
             </Typography>
-          </div>
+          </div> */}
           <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
             Not registered?
             <Link to="/auth/sign-up" className="text-gray-900 ml-1">Create account</Link>
           </Typography>
         </form>
+        <Button onClick={handleTestLogin} type="submit" className="mt-6 w-1/2 mx-auto" fullWidth>
+            {
+              processing ?  "Loging..." : "Test Login"
+            }
+            <small className="block mt-2">(Prefer to create an account to gain the experience of verification system)</small>
+          </Button>
+          
 
       </div>
       <div className="w-2/5 h-full hidden lg:block">
