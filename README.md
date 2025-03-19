@@ -39,7 +39,6 @@
 - **User Management**: API to register, log in, and update user profiles.
 - **Event Management**: Users and organizations can create, list, and filter volunteer events.
 - **Help Requests**: Users can post and offer help requests for ongoing community needs.
-- **Team Management**: Users can form public or private teams for long-term initiatives.
 - **Impact Tracking**: Track volunteer hours, achievements, and milestones.
 - **API Rate Limiting**: Prevents abuse and overuse of the API with rate limiting.
 
