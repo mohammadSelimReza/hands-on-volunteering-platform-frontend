@@ -23,7 +23,7 @@
 - **JWT (JSON Web Tokens)** – For handling authentication and authorization.
 - **Cors** – For enabling cross-origin requests.
 - **Dotenv** – For managing environment variables.
-
+- **DRF** - For building API
 ---
 
 ## 3. Features
